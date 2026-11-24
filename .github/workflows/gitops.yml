@@ -1,3 +1,4 @@
+
 name: GitOps Infrastructure Deployment
 
 on:
@@ -11,30 +12,8 @@ permissions:
   contents: read
 
 jobs:
-  terraform-plan:
-    name: Terraform Plan
-    if: github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-
-      - name: Terraform Initialize
-        run: terraform init
-
-      - name: Terraform Validate
-        run: terraform validate
-
-      - name: Terraform Plan
-        run: terraform plan
-
   terraform-apply:
-    name: Approved Terraform Apply
-    needs: terraform-plan
+    name: Approved Terraform Deployment
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     environment: production
@@ -47,7 +26,17 @@ jobs:
         uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Initialize
-        run: terraform init
+        run: terraform init -backend=false
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        run: terraform plan
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
+

@@ -11,5 +11,5 @@ terraform {
 
 resource "local_file" "gitops" {
   filename = "${path.module}/gitops-deployment.txt"
-  content  = "Project 18: Infrastructure deployed through GitOps workflow"
+  content  = "Project 18: GitOps deployment tested through a pull request"
 }
